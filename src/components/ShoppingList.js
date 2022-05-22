@@ -60,12 +60,14 @@ export default function ShoppingList({ user }) {
                         <i className="fa fa-arrow-left" aria-hidden="true"></i>
                     </span>
                     <h1 className="title">
-                        {room ? room.name : ""}
+                        {room ? room.name : <LoadingAnimation />}
                     </h1>
                 </div>
-                <a href="whatsapp://send?text=Ich%20lade%20zu%20meiner%20Einkaufsliste%20ein%3A%20https%3A%2F%2Fblog.kulturbanause.de" className="icon is-clickable mr-2 mt-2">
-                    <i className="fa fa-share-alt" aria-hidden="true"></i>
-                </a>
+                {room ?
+                    <a href={"whatsapp://send?text=" + encodeURIComponent("Ich lade dich zu meiner Einkaufsliste ein: " + window.location.href + "/" + room.pw)} className="icon is-clickable mr-2 mt-2">
+                        <i className="fa fa-share-alt" aria-hidden="true"></i>
+                    </a>
+                    : ""}
             </div>
             <div className="columns">
                 {room ? room.items.map(item => {
