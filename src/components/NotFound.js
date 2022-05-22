@@ -13,7 +13,9 @@ export default function NotFound() {
                             <Link className="button" to="/">Home</Link>
                         </div>
                         <div className="column has-text-centered">
-                            <img src="https://www.eastfieldcollege.edu/PublishingImages/Pages/PageNotFoundError/404-robot.gif" />
+                            <span class="icon">
+                                <i class="fa fa-chain-broken fa-3x" aria-hidden="true"></i>
+                            </span>
                         </div>
                     </div>
                 </div>

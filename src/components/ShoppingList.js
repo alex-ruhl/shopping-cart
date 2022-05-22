@@ -21,7 +21,7 @@ export default function ShoppingList({ user }) {
             roomData.users.includes(user.uid) ? setRoom(roomData) : navigate("*");
         }
         checkPermission();
-    }, [id])
+    }, [id, user.uid, navigate])
 
     const addItem = async (item) => {
         if (item === "") return;
