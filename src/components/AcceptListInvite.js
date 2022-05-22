@@ -19,6 +19,9 @@ export default function AcceptListInvite({ user }) {
                 return;
             }
             roomData.pw === pw ? setRoom(roomData) : navigate("*");
+            if (roomData.users.includes(user.uid)) {
+                navigate("/list/" + id)
+            }
         }
         checkPermission();
     }, [id, user.uid, navigate, pw])

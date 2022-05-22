@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { auth } from "./Firebase";
 import { Routes, Route } from "react-router-dom";
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from './Firebase';
 import Login from "./components/auth/Login";
 import ShoppingListOverview from './components/ShoppingListOverview';
 import ShoppingList from './components/ShoppingList';
@@ -13,8 +15,12 @@ export default function App() {
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
-
       setUser(user);
+      if (user && user.metadata.lastSignInTime === user.metadata.creationTime) {
+        setDoc(doc(db, "user", user.uid), {
+          rooms: []
+        });
+      }
     })
   }, [])
 
