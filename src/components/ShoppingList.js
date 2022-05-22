@@ -56,7 +56,7 @@ export default function ShoppingList({ user }) {
         <div>
             <div className="is-flex is-flex-row is-justify-content-space-between">
                 <div className="is-flex is-flex-row mb-4">
-                    <span className="icon is-clickable mr-2 mt-2" onClick={() => navigate(-1)}>
+                    <span className="icon is-clickable mr-2 mt-2" onClick={() => navigate("/")}>
                         <i className="fa fa-arrow-left" aria-hidden="true"></i>
                     </span>
                     <h1 className="title">
