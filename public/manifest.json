@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Shopping List",
+  "name": "Shopping List",
+  "description": "Progressive Web App to share Shopping Lists.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +9,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "/icons8-shopping-ios-96.png",
+      "sizes": "96x96",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "density": "2.0"
     }
   ],
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
