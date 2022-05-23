@@ -9,8 +9,10 @@ export default function ShoppingList({ user }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getLists(user.uid, setLists);
-    }, [user.uid])
+        if(user?.uid) {
+            getLists(user.uid, setLists);
+        }
+    }, [user])
 
     return (
         <div className="mt-4">
