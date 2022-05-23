@@ -54,3 +54,21 @@ export const deleteList = async (e, listId, userId, setLists) => {
     }
     getLists(userId, setLists);
 }
+
+/**
+ * 
+ * @param {*} id 
+ * @param {*} user 
+ * @param {*} setRoom 
+ * @param {*} navigate 
+ * @returns 
+ */
+export const checkListPermission = async (id, user, setRoom, navigate) => {
+    const roomRef = doc(db, "room", id);
+    const roomData = await getDoc(roomRef).then(snap => snap.exists() ? snap.data() : null);
+    if (roomData === null) {
+        navigate("*");
+        return;
+    }
+    roomData.users.includes(user.uid) ? setRoom(roomData) : navigate("*");
+}
