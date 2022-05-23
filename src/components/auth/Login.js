@@ -3,7 +3,7 @@ import { signInWithGoogle } from "../../Firebase";
 export default function Login() {
     return (
         <div>
-            <div className="columns">
+            <div className="columns section">
                 <div className="column is-flex is-justify-content-center is-align-items-center" style={{ height: "100vh" }}>
                     <div className="box has-background-primary">
                         <h3 className="title block has-text-white">
