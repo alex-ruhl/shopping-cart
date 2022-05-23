@@ -14,12 +14,20 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    if (localStorage.getItem('user') !== null) {
+      setUser(localStorage.getItem('user'));
+    }
     auth.onAuthStateChanged(user => {
       setUser(user);
-      if (user && user.metadata.lastSignInTime === user.metadata.creationTime) {
-        setDoc(doc(db, "user", user.uid), {
-          rooms: []
-        });
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+        if (user.metadata.lastSignInTime === user.metadata.creationTime) {
+          setDoc(doc(db, "user", user.uid), {
+            rooms: []
+          });
+        }
+      } else {
+        localStorage.removeItem('user');
       }
     })
   }, [])
