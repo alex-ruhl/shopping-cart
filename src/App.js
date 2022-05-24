@@ -22,11 +22,13 @@ export default function App() {
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
         if (user.metadata.lastSignInTime === user.metadata.creationTime) {
+          // First login
           setDoc(doc(db, "user", user.uid), {
             rooms: []
           });
         }
       } else {
+        // Logout
         localStorage.removeItem('user');
       }
     })

@@ -10,7 +10,7 @@ export default function Login() {
                             Melde dich an!
                         </h3>
                         <p className="block has-text-white">
-                            Benutze Shoppin Cart um Einkaufslisten zu erstellen und mit deinen liebsten zu teilen.
+                            Benutze Shopping Cart um Einkaufslisten zu erstellen und mit deinen liebsten zu teilen.
                         </p>
                         <div className="is-flex is-flex-direction-row is-justify-content-center">
                             <button className="button" onClick={signInWithGoogle}>Sign in with Google</button>
