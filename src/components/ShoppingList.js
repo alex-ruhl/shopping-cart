@@ -12,7 +12,7 @@ import LoadingAnimation from "./LoadingAnimation";
  * @param {*} setRoom 
  * @param {*} navigate 
  */
- export const checkListPermission = async (id, user, setRoom, navigate) => {
+export const checkListPermission = async (id, user, setRoom, navigate) => {
     const roomRef = doc(db, "room", id);
     const roomData = await getDoc(roomRef).then(snap => snap.exists() ? snap.data() : null);
     if (roomData === null) {
@@ -24,20 +24,80 @@ import LoadingAnimation from "./LoadingAnimation";
 
 /**
  * 
+ * @param {*} e 
  * @param {*} item 
  * @param {*} id 
  * @param {*} setRoom 
  */
-const removeItemFromList = async (e, item, id, setRoom) => {
+const removeItemFromActiveList = async (e, item, id, setRoom) => {
     e.stopPropagation();
     const roomRef = doc(db, "room", id);
     await runTransaction(db, async (transaction) => {
         const roomData = await transaction.get(roomRef);
         let newItems = roomData.data().items;
+        let prevItems = roomData.data().previous;
         newItems = newItems.filter(obj => obj !== item);
-        transaction.update(roomRef, { items: [...newItems] });
+        prevItems.push(item);
+        transaction.update(roomRef, { items: [...newItems], previous: [...prevItems] });
     });
     getDoc(roomRef).then(snap => snap.exists() ? setRoom(snap.data()) : null);
+}
+
+/**
+ * 
+ * @param {*} e 
+ * @param {*} item 
+ * @param {*} id 
+ * @param {*} setRoom 
+ */
+const removeItemFromPreviousList = async (e, item, id, setRoom) => {
+    e.stopPropagation();
+    const roomRef = doc(db, "room", id);
+    await runTransaction(db, async (transaction) => {
+        const roomData = await transaction.get(roomRef);
+        let prevItems = roomData.data().previous;
+        prevItems = prevItems.filter(obj => obj !== item);
+        transaction.update(roomRef, { previous: [...prevItems] });
+    });
+    getDoc(roomRef).then(snap => snap.exists() ? setRoom(snap.data()) : null);
+}
+
+/**
+ * 
+ * @param {*} item 
+ * @param {*} id 
+ * @param {*} setRoom 
+ */
+const moveItemToActiveList = async (item, id, setRoom) => {
+    const roomRef = doc(db, "room", id);
+    await runTransaction(db, async (transaction) => {
+        const roomData = await transaction.get(roomRef);
+        let prevItems = roomData.data().previous;
+        let newItems = roomData.data().items;
+        prevItems = prevItems.filter(obj => obj !== item);
+        newItems.push(item);
+        transaction.update(roomRef, { items: [...newItems], previous: [...prevItems] });
+    });
+    getDoc(roomRef).then(snap => snap.exists() ? setRoom(snap.data()) : null);
+}
+
+/**
+ * 
+ * @param {*} item 
+ * @param {*} id 
+ * @param {*} setRoom 
+ */
+const addItemToList = async (item, id, setRoom) => {
+    if (item !== "") {
+        const roomRef = doc(db, "room", id);
+        await runTransaction(db, async (transaction) => {
+            const roomData = await transaction.get(roomRef);
+            let newItems = roomData.data().items;
+            newItems.push(item);
+            transaction.update(roomRef, { items: [...newItems] });
+        });
+        getDoc(roomRef).then(snap => setRoom(snap.data()));
+    }
 }
 
 export default function ShoppingList({ user }) {
@@ -48,18 +108,6 @@ export default function ShoppingList({ user }) {
     useEffect(() => {
         checkListPermission(id, user, setRoom, navigate);
     }, [id, user, navigate])
-
-    const addItemToList = async (item) => {
-        if (item === "") return;
-        const roomRef = doc(db, "room", id);
-        await runTransaction(db, async (transaction) => {
-            const roomData = await transaction.get(roomRef);
-            let newItems = roomData.data().items;
-            newItems.push(item);
-            transaction.update(roomRef, { items: [...newItems] });
-        });
-        getDoc(roomRef).then(snap => setRoom(snap.data()));
-    }
 
     return (
         <div>
@@ -78,19 +126,33 @@ export default function ShoppingList({ user }) {
                             <i className="fa fa-share-alt" aria-hidden="true"></i>
                         </a>
                     </div>
-                    <div className="columns">
-                        {room.items.map(item => {
-                            return (
-                                <div className="column p-0 m-1" onClick={() => { }}>
-                                    <div className="box p-2 is-flex is-flex-row is-justify-content-space-between is-align-items-center has-background-primary ">
-                                        <p className="subtitle has-text-light m-0">{item}</p>
-                                        <button className="delete is-pulled-right" onClick={(e) => removeItemFromList(e, item, id, setRoom)}></button>
+                    <div className="">
+                        <div className="columns">
+                            {room.items.map(item => {
+                                return (
+                                    <div className="column p-0 m-1" onClick={() => { }}>
+                                        <div className="box p-2 is-flex is-flex-row is-justify-content-space-between is-align-items-center has-background-primary">
+                                            <p className="subtitle has-text-light m-0">{item}</p>
+                                            <button className="delete is-pulled-right" onClick={(e) => removeItemFromActiveList(e, item, id, setRoom)}></button>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
+                        <div className="columns mt-4">
+                            {room.previous.map(item => {
+                                return (
+                                    <div className="column p-0 m-1" onClick={() => moveItemToActiveList(item, id, setRoom)}>
+                                        <div className="box p-2 is-flex is-flex-row is-justify-content-space-between is-align-items-center has-background-danger">
+                                            <p className="subtitle has-text-light m-0">{item}</p>
+                                            <button className="delete is-pulled-right" onClick={(e) => removeItemFromPreviousList(e, item, id, setRoom)}></button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                    <InputAddItem placeholder={"Was willst du kaufen?"} addAction={addItemToList} />
+                    <InputAddItem placeholder={"Was willst du kaufen?"} addAction={addItemToList} id={id} setAction={setRoom} />
                 </> : <LoadingAnimation />}
         </div>
     )

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function InputAddItem({ placeholder, addAction, userId, setAction }) {
+export default function InputAddItem({ placeholder, addAction, id, setAction }) {
     const [value, setValue] = useState("");
 
     return (
@@ -9,7 +9,7 @@ export default function InputAddItem({ placeholder, addAction, userId, setAction
                 <div className="is-flex is-flex-direction-row is-justify-content-center p-0 mt-2 mb-2">
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        addAction(value, userId, setAction);
+                        addAction(value, id, setAction);
                         setValue(() => "");
                     }}>
                         <div className="field has-addons">
@@ -18,7 +18,7 @@ export default function InputAddItem({ placeholder, addAction, userId, setAction
                             </div>
                             <div className="control">
                                 <button className="button" onClick={() => {
-                                    addAction(value, userId, setAction);
+                                    addAction(value, id, setAction);
                                     setValue(() => "");
                                 }}>
                                     <span className="icon">

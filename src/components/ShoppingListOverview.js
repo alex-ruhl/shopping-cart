@@ -87,7 +87,7 @@ export default function ShoppingList({ user }) {
                 )
             }
             <div className="mt-4"></div>
-            <InputAddItem placeholder={"Liste hinzufügen"} addAction={addList} userId={user.uid} setAction={setLists} />
+            <InputAddItem placeholder={"Liste hinzufügen"} addAction={addList} id={user.uid} setAction={setLists} />
         </div>
     )
 }

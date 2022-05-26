@@ -70,9 +70,7 @@ export default function AcceptListInvite({ user }) {
 
     return (
         <div>
-            {!room ?
-                <LoadingAnimation />
-                :
+            {room ?
                 <div className="columns is-centered mt-4">
                     <div className="column is-5-tablet is-4-desktop is-3-widescreen">
                         <div className="box">
@@ -94,6 +92,8 @@ export default function AcceptListInvite({ user }) {
                         </div>
                     </div>
                 </div>
+                :
+                <LoadingAnimation />
             }
         </div>
     )
