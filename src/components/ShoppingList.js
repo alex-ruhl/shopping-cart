@@ -100,6 +100,14 @@ const addItemToList = async (item, id, setRoom) => {
     }
 }
 
+const shareList = async (title, text, url) => {
+    try {
+        await navigator.share({title: title, text: text, url: url})
+    } catch {
+        navigator.clipboard.writeText(url)
+    }
+}
+
 export default function ShoppingList({ user }) {
     const [room, setRoom] = useState(null);
     const id = useParams().id;
@@ -122,9 +130,9 @@ export default function ShoppingList({ user }) {
                                 {room.name}
                             </h1>
                         </div>
-                        <a href={"whatsapp://send?text=" + encodeURIComponent("Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein: " + window.location.href + "/" + room.pw)} className="icon has-text-black is-clickable mr-2 mt-2">
+                        <div onClick={() => shareList("Shopping Cart", "Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein!", window.location.href + "/" + room.pw)} className="icon has-text-black is-clickable mr-2 mt-2">
                             <i className="fa fa-share-alt" aria-hidden="true"></i>
-                        </a>
+                        </div>
                     </div>
                     <div className="">
                         <div className="columns">
