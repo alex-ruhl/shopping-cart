@@ -1,4 +1,4 @@
-import { useState, forwardRef, useEffect } from "react";
+import { useState, forwardRef} from "react";
 
 const InputAddItem = (props, ref) => {
     const [value, setValue] = useState("");

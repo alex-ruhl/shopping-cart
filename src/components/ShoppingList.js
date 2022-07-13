@@ -169,12 +169,8 @@ export default function ShoppingList({ user }) {
     }, [])
 
     useEffect(() => {
-        let posItems;
-        let posPrev;
         if (itemsRef?.current && prevRef?.current && addHeight !== null) {
-            posItems = itemsRef.current.getBoundingClientRect();
-            posPrev = prevRef.current.getBoundingClientRect();
-
+            const posItems = itemsRef.current.getBoundingClientRect();
             const listHeight = parseInt(addHeight.top) - parseInt(posItems.top) - parseInt(addHeight.height);
             const prevHeight = Math.floor(listHeight / 5);
             const itemsHeight = prevHeight * 4;
