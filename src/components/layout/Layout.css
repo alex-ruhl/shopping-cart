@@ -1,3 +1,7 @@
 .section {
     padding-top: 0.5em;
 }
+
+html, body {
+    overflow: hidden;
+}

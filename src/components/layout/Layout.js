@@ -4,11 +4,9 @@ import "./Layout.css";
 
 export default function Layout() {
     return (
-        <div className="container section">
+        <div className="container section pt-0">
           <Navbar />
-          <main>
-            <Outlet />
-          </main>
+          <Outlet />
         </div>
       );
 }
