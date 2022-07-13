@@ -1,0 +1,25 @@
+.currentList {
+    height: 100%;
+    padding: 0.5em;
+    overflow-x: hidden;
+    overflow-y: scroll !important;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.currentList::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+.previousList {
+    height: 100%;
+    padding: 0.5em;
+    overflow-x: hidden;
+    overflow-y: scroll !important;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.previousList::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
