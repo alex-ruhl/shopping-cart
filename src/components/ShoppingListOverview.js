@@ -4,29 +4,27 @@ import { doc, getDoc, deleteDoc, setDoc, addDoc, collection } from "firebase/fir
 import { db } from "../Firebase";
 import InputAddItem from "./input/InputAddItem";
 import LoadingAnimation from "./LoadingAnimation";
+import SettingsModal from "./SettingsModal";
 
-/**
- * 
- * @param {*} uid 
- * @param {*} setLists 
- */
- export const getLists = async (uid, setLists) => {
+const settingsTemplate = {
+    cacheItems: "",
+    color: "",
+    private: "",
+    cache: ""
+}
+
+export const getLists = async (uid, setLists) => {
     const userRef = doc(db, "user", uid);
     getDoc(userRef).then(snap => snap.exists() ? setLists(snap.data().rooms) : "");
 }
 
-/**
- * 
- * @param {*} e 
- * @param {*} listId 
- * @param {*} userId 
- * @param {*} setLists 
- */
- export const deleteList = async (e, listId, userId, setLists) => {
+
+export const deleteList = async (e, listId, userId, setLists) => {
     e.stopPropagation();
     const listRef = doc(db, "room", listId);
     let users = await getDoc(listRef).then(snap => snap.data().users);
     deleteDoc(listRef);
+    // Remove deleted from all Users
     for (let uid of users) {
         const ref = doc(db, "user", uid);
         let userRooms = await getDoc(ref).then(snap => snap.data().rooms);
@@ -36,16 +34,11 @@ import LoadingAnimation from "./LoadingAnimation";
     getLists(userId, setLists);
 }
 
-/**
- * 
- * @param {*} list 
- * @param {*} userId 
- * @param {*} setLists 
- * @returns 
- */
- export const addList = async (list, userId, setLists) => {
+
+export const addList = async (list, userId, setLists) => {
     if (list === "") return;
     const res = await addDoc(collection(db, "room"), {
+        settings: settingsTemplate,
         items: [],
         name: list,
         previous: [],
@@ -61,10 +54,11 @@ import LoadingAnimation from "./LoadingAnimation";
 
 export default function ShoppingList({ user }) {
     const [lists, setLists] = useState(null);
+    const [isModal, setIsModal] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(user?.uid) {
+        if (user?.uid) {
             getLists(user.uid, setLists);
         }
     }, [user])
@@ -81,11 +75,17 @@ export default function ShoppingList({ user }) {
                             <div className="is-flex is-flex-direction-row">
                                 <h2 className="title is-4 has-text-light">{list.name}</h2>
                             </div>
-                            <button className="delete" onClick={(e) => deleteList(e, list.id, user.uid, setLists)}></button>
+                            <span class="icon" onClick={(e) => {
+                                e.stopPropagation();
+                                setIsModal(!isModal);
+                            }} /* onClick={(e) => deleteList(e, list.id, user.uid, setLists)} */>
+                                <i className="fa fa-lg fa-cog has-background-primary has-text-light"></i>
+                            </span>
                         </div>
                     </div>
                 )
             }
+            <SettingsModal isModal={isModal} setIsModal={setIsModal} settings={null}/>
             <div className="mt-4"></div>
             <InputAddItem placeholder={"Liste hinzufügen"} addAction={addList} id={user.uid} setAction={setLists} />
         </div>
