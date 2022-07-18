@@ -23,3 +23,7 @@
 .previousList::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
 }
+
+.animation {
+    transition: all .15s ease-out;
+}

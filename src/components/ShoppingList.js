@@ -131,7 +131,7 @@ export default function ShoppingList({ user }) {
     const [addHeight, setAddHeight] = useState(null);
     const [room, setRoom] = useState(null);
     const [addRefContained, setAddRefContained] = useState(false);
-    const [viewHeights, setViewHeights] = useState({ current: "", previous: "", previousSelected: false })
+    const [viewHeights, setViewHeights] = useState({ current: "50vh", previous: "10vh", previousSelected: false })
     const id = useParams().id;
     const navigate = useNavigate();
 
@@ -202,7 +202,7 @@ export default function ShoppingList({ user }) {
                         </div>
                     </div>
                         <div>
-                            <div className="tile is-child" style={{ height: viewHeights.current }} ref={itemsRef}>
+                            <div className={styles.animation + " tile is-child"} style={{ height: viewHeights.current }} ref={itemsRef}>
                                 <div className={styles.currentList}>
                                     <div className="columns is-multiline">
                                         {room.items.map((item, index) => {
@@ -224,7 +224,8 @@ export default function ShoppingList({ user }) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="tile is-child" style={{ height: viewHeights.previous }} ref={prevRef}>
+                            { room.previous.length > 0 ? (
+                            <div className={styles.animation + " tile is-child"} style={{ height: viewHeights.previous }} ref={prevRef}>
                                 <div className="p-2 mt-1 mb-1 is-flex is-flex-row is-justify-content-flex-end is-align-items-center is-clickable" onClick={() => updateViewHeights(viewHeights.previous, viewHeights.current, !viewHeights.previousSelected)}>
                                     <span className="icon">
                                         {viewHeights.previousSelected ? (
@@ -240,7 +241,7 @@ export default function ShoppingList({ user }) {
                                         {room.previous.map((item, index) => {
                                             return (
                                                 <div className="column is-6 p-1" onClick={() => moveItemToActiveList(item, id, setRoom, index, room)}>
-                                                    <div className="box p-1 is-flex is-flex-row is-justify-content-space-between is-align-items-center has-background-danger">
+                                                    <div className="box p-1 is-flex is-flex-row is-justify-content-space-between is-align-items-center has-background-danger animation">
                                                         <p className="subtitle has-text-light m-0 ml-1">{item}</p>
                                                         <button className="delete is-pulled-right" onClick={(e) => removeItemFromPreviousList(e, item, id, setRoom, index, room)}></button>
                                                     </div>
@@ -250,6 +251,7 @@ export default function ShoppingList({ user }) {
                                     </div>
                                 </div>
                             </div>
+                            ) : ("")}
                         </div>
                     <InputAddItem placeholder={"Was willst du kaufen?"} addAction={addItemToList} id={id} setAction={setRoom} ref={addRef}/>
                 </> : <LoadingAnimation />}
