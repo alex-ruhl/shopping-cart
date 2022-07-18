@@ -1,34 +1,27 @@
 import { useState } from "react"
 
-export default function EditableText({ text }) {
+export default function EditableText({ text, setText }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [input, setInput] = useState(text);
 
     const changeHandler = e => {
-        setInput(e.target.value)
+        setText(e.target.value)
     }
 
     return (
         <>
             {isEditing ? (
                 <div className="field has-addons">
-                    <div class="control">
-                        <input className="input title is-4" type="text" value={input} onChange={changeHandler} />
-                    </div>
-                    <div className="control">
-                        <button className="button is-large is-success" onClick={() => setIsEditing(!isEditing)}>
-                            <span className="Icon">
-                                <i className="fa fa-floppy-o" ></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div className="control">
-                        <button className="button is-large" onClick={() => setIsEditing(!isEditing)}>
-                            <span className="Icon">
-                                <i className="fa fa-times"></i>
-                            </span>
-                        </button>
-                    </div>
+                    <input className="input" type="text" value={text} onChange={changeHandler} />
+                    <button className="button is-success" onClick={() => setIsEditing(!isEditing)}>
+                        <span className="Icon">
+                            <i className="fa fa-check"></i>
+                        </span>
+                    </button>
+                    <button className="button" onClick={() => setIsEditing(!isEditing)}>
+                        <span className="Icon">
+                            <i className="fa fa-times"></i>
+                        </span>
+                    </button>
                 </div>
             ) : (
                 <div className="is-flex is-flex-direction-row is-justify-content-space-between">
