@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ColorBox from "./ColorBox";
-import ConfirmModal from "./ConfirmModal";
-import EditableText from "./EditableText";
+import ConfirmModal from "./../ConfirmModal";
+import EditableText from "./../EditableText";
 import ListColorChoose from "./ListColorChoose";
 
 export default function SettingsModal({ modalState, setModalState, deleteList, updateList }) {
@@ -26,7 +26,7 @@ export default function SettingsModal({ modalState, setModalState, deleteList, u
     }
     const toggleSettingsModal = (e) => {
         if (e) e.stopPropagation();
-        setModalState(prev => ({...prev, active: !modalState.active}))
+        setModalState(prev => ({ ...prev, active: !modalState.active }))
     }
 
     return (
@@ -105,7 +105,7 @@ export default function SettingsModal({ modalState, setModalState, deleteList, u
                     deleteList();
                     toggleSettingsModal();
                 }
-            } body={<h1 className="title is-4">Möchtest du die Liste "{listNameCache}" wirklich löschen?</h1>}/>
+            } body={<h1 className="title is-4">Möchtest du die Liste "{listNameCache}" wirklich löschen?</h1>} />
         </div>
     )
 }
