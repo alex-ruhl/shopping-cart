@@ -159,6 +159,7 @@ export default function ShoppingList({ user }) {
 
     useEffect(() => {
         checkListPermission(id, user, setRoom, navigate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, user, navigate])
 
     useEffect(() => {
