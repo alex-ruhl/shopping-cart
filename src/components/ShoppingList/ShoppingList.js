@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../Firebase";
+import { db } from "../../Firebase";
 import { getDoc, doc, runTransaction } from "firebase/firestore";
 import styles from './ShoppingList.module.css';
-import InputAddItem from "./input/InputAddItem";
-import LoadingAnimation from "./LoadingAnimation";
+import InputAddItem from "../input/InputAddItem";
+import LoadingAnimation from "../LoadingAnimation";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 /**
  * 
@@ -129,7 +130,7 @@ export default function ShoppingList({ user }) {
     const prevRef = useRef();
     const addRef = useRef();
     const [addHeight, setAddHeight] = useState(null);
-    const [room, setRoom] = useState(null);
+    const [room, setRoom] = useLocalStorage(useParams().id, null);
     const [addRefContained, setAddRefContained] = useState(false);
     const [viewHeights, setViewHeights] = useState({ current: "50vh", previous: "10vh", previousSelected: false })
     const id = useParams().id;
@@ -253,7 +254,13 @@ export default function ShoppingList({ user }) {
                             </div>
                             ) : ("")}
                         </div>
-                    <InputAddItem placeholder={"Was willst du kaufen?"} addAction={addItemToList} id={id} setAction={setRoom} ref={addRef}/>
+                    <InputAddItem 
+                        placeholder={"Was willst du kaufen?"} 
+                        addAction={addItemToList} 
+                        id={id} 
+                        setAction={setRoom} 
+                        ref={addRef}
+                    />
                 </> : <LoadingAnimation />}
         </div>
     )
