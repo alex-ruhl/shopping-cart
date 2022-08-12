@@ -24,7 +24,6 @@ export default function ShoppingList({ user }) {
 
     return (
         <div className="mt-4">
-            <h1 className="title">Meine Listen</h1>
             {lists === null ?
                 <LoadingAnimation />
                 :

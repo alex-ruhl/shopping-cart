@@ -11,7 +11,9 @@ export default function Navbar() {
                 <span role="button" className="navbar-item is-clickable" onClick={() => navigate("/")}>
                     <i className="fa fa-shopping-bag fa-lg" aria-hidden="true"></i>
                 </span>
+                <h3 className="navbar-item title is-5">Shopping Cart</h3>
             </div>
+            
             <div className="navbar-end">
                 <div className="navbar-item">
                     <LogOut />

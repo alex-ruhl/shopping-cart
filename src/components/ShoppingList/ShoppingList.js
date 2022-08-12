@@ -31,6 +31,31 @@ export const checkListPermission = async (id, user, setRoom, navigate) => {
  * @param {*} id 
  * @param {*} setRoom 
  */
+const removeItemFromList = async (item, id, setRoom, index, room) => {
+    room.items[index] = { value: room.items[index], checked: true }
+    setRoom(prev => ({ ...prev, items: room.items }));
+
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    setRoom(prev => ({ ...prev, items: room.items }));
+
+    const roomRef = doc(db, "room", id);
+    await runTransaction(db, async (transaction) => {
+        const roomData = await transaction.get(roomRef);
+        let newItems = roomData.data().items;
+        newItems = newItems.filter(obj => obj !== item);
+        transaction.update(roomRef, { items: [...newItems] });
+    });
+    getDoc(roomRef).then(snap => snap.exists() ? setRoom(snap.data()) : null);
+}
+
+/**
+ * 
+ * @param {*} e 
+ * @param {*} item 
+ * @param {*} id 
+ * @param {*} setRoom 
+ */
 const removeItemFromActiveList = async (item, id, setRoom, index, room) => {
     room.items[index] = { value: room.items[index], checked: true }
     setRoom(prev => ({ ...prev, items: room.items }));
@@ -159,7 +184,7 @@ export default function ShoppingList({ user }) {
 
     useEffect(() => {
         checkListPermission(id, user, setRoom, navigate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, user, navigate])
 
     useEffect(() => {
@@ -198,35 +223,41 @@ export default function ShoppingList({ user }) {
                             </h1>
                         </div>
                         <div className="is-flex is-align-items-center">
-                            <div onClick={() => shareList("Shopping Cart", "Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein!", window.location.href + "/" + room.pw)} className="icon has-text-black is-clickable">
-                                <i className="fa fa-share-alt" aria-hidden="true"></i>
-                            </div>
+                            {!room.settings.private ?
+                                <div onClick={() => shareList("Shopping Cart", "Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein!", window.location.href + "/" + room.pw)} className="icon has-text-black is-clickable">
+                                    <i className="fa fa-share-alt" aria-hidden="true"></i>
+                                </div>
+                                :
+                                <>
+                                </>
+                            }
+
                         </div>
                     </div>
-                        <div>
-                            <div className={styles.animation + " tile is-child"} style={{ height: viewHeights.current }} ref={itemsRef}>
-                                <div className={styles.currentList}>
-                                    <div className="columns is-multiline">
-                                        {room.items.map((item, index) => {
-                                            return (
-                                                <div className="column is-6 p-1" onClick={() => removeItemFromActiveList(item, id, setRoom, index, room)}>
-                                                    <div className="box p-1 is-flex is-flex-row is-align-items-center has-background-primary is-clickable">
-                                                        <span className="icon ml-1">
-                                                            {item?.checked === true ? (
-                                                                <i className="fa fa-lg fa-check-square-o has-text-light mr-3" />
-                                                            ) : (
-                                                                <i className="fa fa-lg fa-square-o has-text-light mr-3" />
-                                                            )}
-                                                        </span>
-                                                        <p className="subtitle has-text-light m-0">{item?.value || item}</p>
-                                                    </div>
+                    <div>
+                        <div className={styles.animation + " tile is-child"} style={{ height: viewHeights.current }} ref={itemsRef}>
+                            <div className={styles.currentList}>
+                                <div className="columns is-multiline">
+                                    {room.items.map((item, index) => {
+                                        return (
+                                            <div className="column is-6 p-1" onClick={() => room.settings.cache ? removeItemFromActiveList(item, id, setRoom, index, room) : removeItemFromList(item, id, setRoom, index, room)}>
+                                                <div className="box p-1 is-flex is-flex-row is-align-items-center has-background-primary is-clickable">
+                                                    <span className="icon ml-1">
+                                                        {item?.checked === true ? (
+                                                            <i className="fa fa-lg fa-check-square-o has-text-light mr-3" />
+                                                        ) : (
+                                                            <i className="fa fa-lg fa-square-o has-text-light mr-3" />
+                                                        )}
+                                                    </span>
+                                                    <p className="subtitle has-text-light m-0">{item?.value || item}</p>
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                            { room.previous.length > 0 ? (
+                        </div>
+                        {room.settings.cache && room.previous.length > 0 ? (
                             <div className={styles.animation + " tile is-child"} style={{ height: viewHeights.previous }} ref={prevRef}>
                                 <div className="p-2 mt-1 mb-1 is-flex is-flex-row is-justify-content-flex-end is-align-items-center is-clickable" onClick={() => updateViewHeights(viewHeights.previous, viewHeights.current, !viewHeights.previousSelected)}>
                                     <span className="icon">
@@ -253,13 +284,13 @@ export default function ShoppingList({ user }) {
                                     </div>
                                 </div>
                             </div>
-                            ) : ("")}
-                        </div>
-                    <InputAddItem 
-                        placeholder={"Was willst du kaufen?"} 
-                        addAction={addItemToList} 
-                        id={id} 
-                        setAction={setRoom} 
+                        ) : ("")}
+                    </div>
+                    <InputAddItem
+                        placeholder={"Was willst du kaufen?"}
+                        addAction={addItemToList}
+                        id={id}
+                        setAction={setRoom}
                         ref={addRef}
                     />
                 </> : <LoadingAnimation />}
