@@ -6,7 +6,7 @@ import InputAddItem from "../input/InputAddItem";
 import LoadingAnimation from "../LoadingAnimation";
 import SettingsModal from "../settingsModal/SettingsModal";
 
-export default function ShoppingList({ user }) {
+export default function ShoppingListOverview({ user }) {
     const [lists, setLists] = useLocalStorage("einkaufslisten", null);
     const [modalState, setModalState] = useState({ active: false, listId: null, listName: null, listSettings: { ...api.settingsTemplate } });
     const navigate = useNavigate();
