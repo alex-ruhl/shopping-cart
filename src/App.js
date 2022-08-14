@@ -3,12 +3,12 @@ import { auth } from "./Firebase";
 import { Routes, Route } from "react-router-dom";
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from './Firebase';
-import Login from "../components/auth/Login";
-import ShoppingListOverview from '../components/shoppingListOverview/ShoppingListOverview';
-import ShoppingList from '../components/shoppingList/ShoppingList';
-import Layout from '../components/layout/Layout';
-import NotFound from '../components/NotFound';
-import AcceptListInvite from '../components/AcceptListInvite';
+import Login from "./components/auth/Login";
+import ShoppingListOverview from './components/shoppingListOverview/ShoppingListOverview';
+import ShoppingList from './components/shoppingList/ShoppingList';
+import Layout from './components/layout/Layout';
+import NotFound from './components/NotFound';
+import AcceptListInvite from './components/AcceptListInvite';
 
 export default function App() {
   const [user, setUser] = useState(null);
