@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../Firebase";
-import { getDoc, doc, runTransaction } from "firebase/firestore";
+import { getDoc, doc, runTransaction, onSnapshot } from "firebase/firestore";
 import styles from './ShoppingList.module.css';
 import InputAddItem from "../input/InputAddItem";
 import LoadingAnimation from "../LoadingAnimation";
+import ShareButton from "../ShareButton";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 /**
@@ -14,14 +15,27 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
  * @param {*} setRoom 
  * @param {*} navigate 
  */
-export const checkListPermission = async (id, user, setRoom, navigate) => {
+export const getList = async (id, user, setRoom, navigate) => {
     const roomRef = doc(db, "room", id);
-    const roomData = await getDoc(roomRef).then(snap => snap.exists() ? snap.data() : null);
-    if (roomData === null) {
+    let roomData = await getDoc(roomRef);
+    roomData = roomData.exists() ? roomData.data() : null;
+    if (roomData=== null) {
         navigate("*");
-    } else {
-        roomData.users.includes(user.uid) ? setRoom(roomData) : navigate("*");
+        alert("Die Listendaten konten nicht geladen werden.");
     }
+    if (roomData.users.includes(user.uid)) {
+        const unsubscribe = onSnapshot(roomRef, (snapshot) => {
+            if (snapshot.exists()) {
+                setRoom(snapshot.data())
+            }
+        });
+        return unsubscribe;
+    } else {
+        navigate("*");
+        alert("Sie haben keinen Zugriff auf die Liste");
+    }
+    function tmp() {};
+    return tmp;
 }
 
 /**
@@ -142,14 +156,6 @@ const addItemToList = async (item, id, setRoom) => {
     }
 }
 
-const shareList = async (title, text, url) => {
-    if (navigator.share) {
-        navigator.share({ title: title, text: text, url: url });
-    } else {
-        navigator.clipboard.writeText(url);
-    }
-}
-
 export default function ShoppingList({ user }) {
     const itemsRef = useRef();
     const prevRef = useRef();
@@ -183,7 +189,8 @@ export default function ShoppingList({ user }) {
     })
 
     useEffect(() => {
-        checkListPermission(id, user, setRoom, navigate);
+        const unsubscribe = getList(id, user, setRoom, navigate);
+        return () => unsubscribe.then(unsubscribe => unsubscribe());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, user, navigate])
 
@@ -224,12 +231,9 @@ export default function ShoppingList({ user }) {
                         </div>
                         <div className="is-flex is-align-items-center">
                             {!room.settings.private ?
-                                <div onClick={() => shareList("Shopping Cart", "Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein!", window.location.href + "/" + room.pw)} className="icon has-text-black is-clickable">
-                                    <i className="fa fa-share-alt" aria-hidden="true"></i>
-                                </div>
+                                <ShareButton title={"Shopping Cart"} text={"Ich lade dich zu meiner Einkaufsliste \"" + room.name + "\" ein!"} url={window.location.href + "/" + room.pw}/>
                                 :
-                                <>
-                                </>
+                                <></>
                             }
 
                         </div>
